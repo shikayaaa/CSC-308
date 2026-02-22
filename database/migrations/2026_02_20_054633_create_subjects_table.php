@@ -6,36 +6,42 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('subjects', function (Blueprint $table) {
-       $table->id();
+            $table->id();
 
-    $table->foreignId('student_id')->nullable()->constrained()->nullOnDelete();
+            // Subject identification
+            $table->string('subject_code', 20)->unique();       // e.g. "CS101"
+            $table->string('descriptive_title', 150);           // e.g. "Introduction to Computing"
+            $table->text('description')->nullable();
 
-    $table->string('employee_id')->unique();
-    $table->string('first_name');
-    $table->string('last_name');
-    $table->string('email')->unique();
-    $table->string('contact_number')->nullable();
+            // Units
+            $table->unsignedTinyInteger('lecture_units');
+            $table->unsignedTinyInteger('laboratory_units');
 
-    $table->string('department')->nullable();
-    $table->string('specialization')->nullable();
+            // Classification
+            $table->enum('subject_type', ['major', 'minor', 'elective', 'ge', 'nstp', 'pe'])
+                  ->default('major');
+            $table->string('department', 100)->nullable();
+            $table->string('program', 100)->nullable();
+            $table->unsignedTinyInteger('year_level')->nullable();
+            $table->enum('semester_offered', ['1st', '2nd', 'summer', 'both'])
+                  ->default('both');
 
-    $table->enum('employment_type', ['full-time', 'part-time', 'contractual'])->default('full-time');
-    $table->enum('status', ['active', 'inactive', 'on-leave', 'resigned'])->default('active');
+            // Prerequisite (self-referencing)
+            $table->unsignedBigInteger('prerequisite_id')->nullable();
+            $table->foreign('prerequisite_id')
+                  ->references('id')
+                  ->on('subjects')
+                  ->nullOnDelete();
 
-    $table->timestamps();
-    $table->softDeletes();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('subjects');

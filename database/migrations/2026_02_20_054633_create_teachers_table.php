@@ -6,46 +6,31 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
 
-    $table->string('subject_code', 20)->unique();
-    $table->string('descriptive_title');
-    $table->text('description')->nullable();
+            // Personal info
+            $table->string('employee_id')->unique();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('email')->unique();
+            $table->string('contact_number', 20)->nullable();
 
-    $table->unsignedTinyInteger('lecture_units');
-    $table->unsignedTinyInteger('laboratory_units');
+            // Academic info
+            $table->string('department', 100)->nullable();
+            $table->string('specialization', 150)->nullable();
+            $table->enum('employment_type', ['full-time', 'part-time', 'contractual'])
+                  ->default('full-time');
+            $table->enum('status', ['active', 'inactive', 'on-leave', 'resigned'])
+                  ->default('active');
 
-    // REMOVE storedAs (causes issues)
-    // compute in model instead
-
-    $table->string('subject_type')->default('major');
-    $table->string('department')->nullable();
-    $table->string('program')->nullable();
-    $table->unsignedTinyInteger('year_level')->nullable();
-
-    $table->enum('semester_offered', ['1st', '2nd', 'summer', 'both'])->default('both');
-
-    $table->foreignId('prerequisite_id')
-          ->nullable()
-          ->constrained('subjects')
-          ->nullOnDelete();
-
-    $table->boolean('is_active')->default(true);
-
-    $table->timestamps();
-    $table->softDeletes();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('teachers');
