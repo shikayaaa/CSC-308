@@ -10,22 +10,16 @@ return new class extends Migration
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-
-            // Personal info
-            $table->string('employee_id')->unique();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('department_id')->constrained('departments')->restrictOnDelete(); // ✅ FK to departments
+            $table->string('employee_id', 20)->unique();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('contact_number', 20)->nullable();
-
-            // Academic info
-            $table->string('department', 100)->nullable();
             $table->string('specialization', 150)->nullable();
-            $table->enum('employment_type', ['full-time', 'part-time', 'contractual'])
-                  ->default('full-time');
-            $table->enum('status', ['active', 'inactive', 'on-leave', 'resigned'])
-                  ->default('active');
-
+            $table->enum('employment_type', ['full-time', 'part-time', 'contractual'])->default('full-time');
+            $table->enum('status', ['active', 'inactive', 'on-leave', 'resigned'])->default('active');
             $table->timestamps();
             $table->softDeletes();
         });
