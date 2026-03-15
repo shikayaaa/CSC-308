@@ -15,6 +15,10 @@ return new class extends Migration
             $table->string('student_number', 20)->unique();
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('middle_name')->nullable();
+            $table->string('student_name');
+            $table->string('gender')->nullable();
+             $table->string('birthdate')->nullable();
             $table->string('email')->unique();
             $table->unsignedTinyInteger('year_level');
             $table->enum('status', ['active', 'inactive', 'graduated', 'dropped'])->default('active');
