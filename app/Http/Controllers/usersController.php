@@ -24,5 +24,12 @@ class usersController extends Controller
           'password' => bcrypt($request->password),
        ]);
          return redirect('/users');
-    }   
+    }  
+    
+    public function destroy($id){
+    $user = User::findOrFail($id);
+    $user->delete();
+    return redirect('/users');
 }
+}
+
